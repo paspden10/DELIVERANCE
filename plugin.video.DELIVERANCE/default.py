@@ -68,6 +68,7 @@ if os.path.exists(source_file)==True:
 else: SOURCES = []
 
 
+
 def addon_log(string):
     if debug == 'true':
         xbmc.log("[addon.live.SimpleKore Lists-%s]: %s" %(addon_version, string))
@@ -84,7 +85,7 @@ def scrape():
     html = OPEN_URL('http://www.goalsarena.org/en/')
     match = re.compile('<a title="(.+?)".+?href="(.+?)">',re.DOTALL).findall(html)
     for name,url in match:
-        Menu(name,url,34,'http://www.sport-xplosion.com/DELIVERANCE%20TXT%20FILES/Deliverance.png' ,FANART,'','')
+		PLAY(name,url,34,'http://www.sport-xplosion.com/DELIVERANCE%20TXT%20FILES/Deliverance.png' ,FANART,'','')
 
 def Big_Resolve(name,url):
 	import urlresolver
@@ -119,25 +120,13 @@ def PLAY(name, url, mode, iconimage, fanart, description, extra, showcontext=Tru
     return ok
     xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
-def Menu(name, url, mode, iconimage, fanart, description, extra, showcontext=True, allinfo={}):
-    u = sys.argv[0] + "?url=" + urllib.quote_plus(url) + "&mode=" + str(mode) + "&name=" + urllib.quote_plus(
-        name) + "&iconimage=" + urllib.quote_plus(iconimage) + "&fanart=" + urllib.quote_plus(
-        fanart) + "&description=" + urllib.quote_plus(description) + "&extra=" + urllib.quote_plus(extra)
-    ok = True
-    liz = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
-    liz.setInfo(type="Video", infoLabels={"Title": name, "Plot": description})
-    liz.setProperty("Fanart_Image", fanart)
-    ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
-    return ok
-    xbmcplugin.endOfDirectory(int(sys.argv[1]))
 	
 def scrape_link(name,url):
     html = OPEN_URL(url)
-    block = re.compile('<div id="videodetailsarea(.+?)<div id="fb-root"></div>',re.DOTALL).findall(html)
-    match = re.compile('<div style=.+?<iframe src="(.+?)"',re.DOTALL).findall(str(block))
+    match = re.compile('<div style=.+?initial;"><iframe src="(.+?)"').findall(html)
     for link in match:
         #playlink = 'http:'+link.replace('/v2', '').replace('zeus.json', 'video-sd.mp4?hosting_id=21772').replace('config.playwire.com', 'cdn.video.playwire.com')
-        PLAY('Highlights/Intervies',link,61,'http://www.sport-xplosion.com/DELIVERANCE%20TXT%20FILES/Deliverance.png' ,FANART,'','')
+        Big_Resolve(name,link)	
 
 def table():
     results = []
@@ -272,6 +261,9 @@ def makeRequest(url, headers=None):
 
 				
 def SKindex():
+    if addon.getSetting('Intro_Vid')=='true':
+        INTRO_VID = 'http://sport-xplosion.com/DELIVERANCE/1002985_gears.mp4'
+        xbmc.Player().play(INTRO_VID, xbmcgui.ListItem('Deliverance'))
     addon_log("SKindex")
     addDir('Favorites','Favorites',4,'http://goo.gl/TyDD6w' ,  FANART,'','','','')
     addDir('Football Highlights','Football Highlights',33,'http://www.sport-xplosion.com/DELIVERANCE%20TXT%20FILES/Deliverance.png' ,  FANART,'','','','')
@@ -2861,7 +2853,4 @@ elif mode==53:
     xbmcplugin.endOfDirectory(int(sys.argv[1]))
 elif mode==60:
     table()
-    xbmcplugin.endOfDirectory(int(sys.argv[1]))
-elif mode==61:
-    Big_Resolve(name,url)
     xbmcplugin.endOfDirectory(int(sys.argv[1]))

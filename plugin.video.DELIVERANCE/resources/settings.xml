@@ -1,0 +1,9 @@
+<settings>
+    <!-- main user settings -->
+    <category label="User Settings">
+        <setting id="Intro_Vid" type="bool" label="Intro Video" default="true"/>
+        
+    </category>
+
+    
+</settings>
